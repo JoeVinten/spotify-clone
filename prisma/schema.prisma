@@ -6,32 +6,44 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider          = "postgresql"
+  url               = env("DATABASE_URL")
   shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
-
 model User {
-  id        Int @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updateAt  DateTime @updatedAt
-  email     String @unique
+  id        Int        @id @default(autoincrement())
+  createdAt DateTime   @default(now())
+  updateAt  DateTime   @updatedAt
+  email     String     @unique
   password  String
+  playlists Playlist[]
 }
 
 model Song {
-  id        Int @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updateAt  DateTime @updatedAt
+  id        Int        @id @default(autoincrement())
+  createdAt DateTime   @default(now())
+  updateAt  DateTime   @updatedAt
   name      String
-  artist    Artist @relation(fields: [artistId], references: [id])
+  artist    Artist     @relation(fields: [artistId], references: [id])
   artistId  Int
+  playlists Playlist[]
 }
 
 model Artist {
-  id        Int @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   updateat  DateTime @updatedAt
   Song      Song[]
+  name      String   @unique
+}
+
+model Playlist {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updateat  DateTime @updatedAt
+  name      String
+  song      Song[]
+  user      User?    @relation(fields: [userId], references: [id])
+  userId    Int?
 }
